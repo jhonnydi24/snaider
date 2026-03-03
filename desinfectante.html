@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desinfectante Bactericida - SNAIDER</title>
+    <script>
+        // Bloquear botón derecho
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        // Bloquear copiar
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+        });
+    </script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000; /* Negro SNAIDER */
+            color: #f4f4f4;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #0a0a0a; /* Fondo tarjeta oscuro */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+            border: 1px solid #166534;
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid #22c55e; /* Verde Neón */
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #22c55e;
+            text-transform: uppercase;
+            font-size: 1.8rem;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        h2 {
+            color: #4ade80;
+            border-bottom: 1px solid #14532d;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+        nav {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #050505;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #14532d;
+        }
+        th {
+            background-color: #22c55e;
+            color: #000000;
+            text-transform: uppercase;
+        }
+        tr:hover {
+            background-color: #0f1a10;
+        }
+        .procedimiento {
+            background: #050505;
+            padding: 20px;
+            border-left: 5px solid #22c55e;
+            border-radius: 4px;
+            margin-top: 25px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+        }
+        li::before {
+            content: '⚡';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .highlight {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .btn-back {
+            color: #22c55e;
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid #22c55e;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+        .btn-back:hover {
+            background: #22c55e;
+            color: #000;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav>
+        <a href="index.html" class="btn-back">VOLVER AL PANEL</a>
+    </nav>
+
+    <header>
+        <h1>DESINFECTANTE BACTERICIDA</h1>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Para 100 Litros</th>
+                <th>Para 1 Litro</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Agua</td><td>98,3 Kilogramos</td><td>983 Gramos</td></tr>
+            <tr><td>Nonil fenol 10 moles</td><td>500 Gramos</td><td>5 Gramos</td></tr>
+            <tr><td>Amonio cuaternario - Dodigen 226</td><td>500 Gramos</td><td>5 Gramos</td></tr>
+            <tr><td>Fragancia</td><td>500 Gramos</td><td>5 Gramos</td></tr>
+            <tr><td>Propilenglicol</td><td>100 Gramos</td><td>1 Gramo</td></tr>
+            <tr><td>Color</td><td>Al gusto</td><td>Al gusto</td></tr>
+            <tr><td>Conservante</td><td>100 Gramos</td><td>1 Gramo</td></tr>
+            <tr><td style="color: #22c55e;"><strong>Total</strong></td><td style="color: #22c55e;"><strong>100 Kilogramos</strong></td><td style="color: #22c55e;"><strong>1 Litro</strong></td></tr>
+        </tbody>
+    </table>
+
+    <h2>Procedimiento de Control SNAIDER</h2>
+    <div class="procedimiento">
+        <ul>
+            <li>Pesar el <span class="highlight">agua</span> en el tanque mezclador según lote de producción.</li>
+            <li>Pesar el <span class="highlight">Nonil fenol 10 M, la fragancia, el propilenglicol y el amonio cuaternario</span> en un envase auxiliar.</li>
+            <li>Homogeneizar esta mezcla auxiliar por <span class="highlight">5 minutos</span> y verter al tanque principal.</li>
+            <li>Agitar el sistema por un espacio de <span class="highlight">10 minutos</span>.</li>
+            <li>Añadir el <span class="highlight">colorante</span> (diluido previamente) y agitar por <span class="highlight">5 minutos</span>.</li>
+            <li>Incorporar el <span class="highlight">conservante</span> manteniendo la agitación por <span class="highlight">5 minutos</span> adicionales.</li>
+            <li>Dejar reposar <span class="highlight">30 minutos</span> para eliminar microburbujas y proceder al envasado.</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

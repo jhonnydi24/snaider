@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>
+        // Bloquear botón derecho y copiar
+        document.addEventListener('contextmenu', function(e) { e.preventDefault(); });
+        document.addEventListener('copy', function(e) { e.preventDefault(); });
+    </script>
+    <meta charset="UTF-8">
+    <title>Calculadora SNAIDER - jdiaz</title>
+    <style>
+        body { font-family: sans-serif; background: #000000; color: white; padding: 20px; text-align: center; }
+        .card { background: #0a0a0a; padding: 20px; border-radius: 12px; max-width: 500px; margin: auto; border: 1px solid #22c55e; }
+        
+        select, input { 
+            padding: 10px; border-radius: 5px; border: 1px solid #22c55e; 
+            width: 80%; font-size: 1.2rem; margin: 10px 0; 
+            background: #000; color: #22c55e; outline: none; 
+        }
+
+        table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+        th { background: #22c55e; color: #000000; padding: 10px; text-transform: uppercase; font-size: 0.8rem; }
+        td { padding: 10px; border-bottom: 1px solid #166534; }
+        
+        .btn-back { display: block; margin-top: 20px; color: #22c55e; text-decoration: none; font-weight: bold; }
+        strong { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+    <h1>Calculadora de Producción SNAIDER 🧪</h1>
+    
+    <div class="card">
+        <label>Seleccione el Producto:</label><br>
+        <select id="producto" onchange="calcular()">
+            <option value="ariel">Detergente Tipo Ariel</option>
+            <option value="lavaplatos">Lavaplatos Líquido</option>
+            <option value="desinfectante">Desinfectante de Pisos</option>
+            <option value="cera">Cera Autobrillante</option>
+            <option value="desengrasante">Desengrasante Industrial</option>
+            <option value="cloro">Cloro Jabonoso</option>
+            <option value="suavizante">Suavizante de Ropa</option>
+        </select>
+
+        <br><br>
+
+        <label>¿Cuántos litros desea fabricar?</label><br>
+        <input type="number" id="litros" value="100" oninput="calcular()">
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Componente</th>
+                    <th>Cantidad Requerida</th>
+                </tr>
+            </thead>
+            <tbody id="tabla-cuerpo">
+                </tbody>
+        </table>
+        <a href="index.html" class="btn-back">← Volver al Panel</a>
+    </div>
+
+    <script>
+        // Base de datos de fórmulas (Cantidades base por 1 Litro)
+        const formulas = {
+            "ariel": [
+                { nombre: "Agua", base: 0.873 },
+                { nombre: "Ácido Sulfónico al 97%", base: 0.045 },
+                { nombre: "Genapol en Pasta al 70%", base: 0.045 },
+                { nombre: "Tripolifosfato de Sodio", base: 0.005 },
+                { nombre: "Soda Líquida al 50%", base: 0.012 },
+                { nombre: "Fragancia", base: 0.001 },
+                { nombre: "Sal Común", base: 0.018 },
+                { nombre: "Conservante", base: 0.001 }
+            ],
+            "lavaplatos": [
+                { nombre: "Agua", base: 0.820 },
+                { nombre: "Ácido Sulfónico", base: 0.080 },
+                { nombre: "Soda Cáustica 50%", base: 0.022 },
+                { nombre: "Genapol LRO", base: 0.040 },
+                { nombre: "Glicerina", base: 0.005 },
+                { nombre: "Fragancia Limón", base: 0.003 },
+                { nombre: "Sal (Espesante)", base: 0.030 }
+            ],
+            "desinfectante": [
+                { nombre: "Agua", base: 0.965 },
+                { nombre: "Nonil Fenol 10M", base: 0.010 },
+                { nombre: "Aroma/Fragancia", base: 0.010 },
+                { nombre: "Amonio Cuaternario", base: 0.010 },
+                { nombre: "Colorante", base: 0.005 }
+            ],
+            "cera": [
+                { nombre: "Agua", base: 0.850 },
+                { nombre: "Emulsión de Polietileno", base: 0.120 },
+                { nombre: "Resina Nivelante", base: 0.020 },
+                { nombre: "Preservante", base: 0.005 },
+                { nombre: "Fragancia (Opcional)", base: 0.005 }
+            ],
+            "desengrasante": [
+                { nombre: "Agua", base: 0.864 }, 
+                { nombre: "Ácido Sulfónico", base: 0.05 }, 
+                { nombre: "Soda Cáustica 50%", base: 0.03 },
+                { nombre: "Nonil Fenol 10M", base: 0.02 },
+                { nombre: "Butil Glicol", base: 0.02 },
+                { nombre: "Sal Común", base: 0.015 }
+            ],
+            "cloro": [
+                { nombre: "Agua", base: 0.850 },
+                { nombre: "Hipoclorito de Sodio", base: 0.100 },
+                { nombre: "Genapol LRO", base: 0.030 },
+                { nombre: "Soda Cáustica", base: 0.020 }
+            ],
+            "suavizante": [
+                { nombre: "Agua", base: 0.940 },
+                { nombre: "Quartamin (Base)", base: 0.040 },
+                { nombre: "Fragancia Suavizante", base: 0.015 },
+                { nombre: "Colorante", base: 0.005 }
+            ]
+        };
+
+        function calcular() {
+            const productoKey = document.getElementById('producto').value;
+            const litros = document.getElementById('litros').value;
+            const cuerpo = document.getElementById('tabla-cuerpo');
+            
+            cuerpo.innerHTML = "";
+
+            if (!litros || litros <= 0) return;
+
+            const formulaSeleccionada = formulas[productoKey];
+
+            formulaSeleccionada.forEach(item => {
+                let total = (item.base * litros).toFixed(3);
+                let unidad = total >= 1 ? "Kg" : "g";
+                let valorMostrado = total >= 1 ? total : (total * 1000).toFixed(0);
+
+                cuerpo.innerHTML += `<tr>
+                    <td>${item.nombre}</td>
+                    <td><strong>${valorMostrado} ${unidad}</strong></td>
+                </tr>`;
+            });
+        }
+
+        window.onload = calcular;
+    </script>
+</body>
+</html>

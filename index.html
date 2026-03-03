@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>
+        // --- PROTECCIÓN DE SESIÓN (ESPECÍFICA PARA SNAIDER) ---
+        if (localStorage.getItem('acceso_snaider') !== 'true') {
+            window.location.href = "login.html";
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNAIDER | Panel de Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;900&display=swap" rel="stylesheet">
+    <style>
+        /* Bloqueo de selección de texto */
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        body {
+            margin: 0; padding: 0; font-family: 'Roboto', sans-serif;
+            background: #000000; color: #ffffff; /* FONDO NEGRO */
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+        }
+
+        header {
+            text-align: center; padding: 50px 20px; width: 100%;
+            background: linear-gradient(180deg, #0a0a0a 0%, #000000 100%);
+            border-bottom: 2px solid #22c55e; /* VERDE SNAIDER */
+            position: relative;
+        }
+
+        .logout-btn {
+            position: absolute; top: 20px; right: 20px;
+            background: #ef4444; color: white; border: none;
+            padding: 8px 15px; border-radius: 5px; cursor: pointer;
+            font-weight: bold; font-size: 0.8rem; transition: 0.3s;
+        }
+        .logout-btn:hover { background: #dc2626; transform: scale(1.05); }
+
+        h1 { font-size: 3.5rem; margin: 0; letter-spacing: -2px; text-transform: uppercase; font-weight: 900; }
+        h1 span { color: #22c55e; } /* VERDE */
+        
+        .slogan { font-weight: 300; color: #a3a3a3; margin-top: 10px; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px; max-width: 1000px; width: 90%; padding: 40px 0;
+        }
+
+        .card {
+            background: #0f172a; border: 1px solid #166534; padding: 30px;
+            border-radius: 12px; text-align: center; transition: all 0.3s ease;
+            display: flex; justify-content: center; align-items: center;
+            height: 80px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+        }
+        .card:hover {
+            border-color: #22c55e; background: #052e16;
+            transform: translateY(-5px); box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+        .card a, .card span { text-decoration: none; font-size: 1.4rem; text-transform: uppercase; letter-spacing: 1px; color: #ffffff; font-weight: bold;}
+        
+        #modalCalc {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.9);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: #0a0a0a; margin: 2% auto; padding: 25px;
+            border: 2px solid #22c55e; width: 90%; max-width: 550px;
+            border-radius: 15px; text-align: center;
+            max-height: 90vh; overflow-y: auto; color: white;
+        }
+
+        select, input {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px;
+            border: 1px solid #22c55e; background: #000000; color: #22c55e; font-size: 1rem;
+            outline: none; font-weight: bold;
+        }
+
+        table { width: 100%; margin-top: 15px; border-collapse: collapse; }
+        th { background: #22c55e; color: #000000; padding: 10px; font-size: 0.85rem; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #166534; font-size: 0.95rem; text-align: left; }
+        
+        .close-btn { color: #ef4444; font-weight: bold; cursor: pointer; float: right; padding: 5px; }
+        .resaltado { color: #22c55e; font-weight: 900; }
+
+        footer { margin-top: auto; padding: 20px; color: #525252; font-size: 0.8rem; }
+        .brand-line { width: 60px; height: 4px; background: #22c55e; margin: 20px auto; }
+    </style>
+</head>
+<body oncontextmenu="return false;"> 
+
+    <header>
+        <button class="logout-btn" onclick="cerrarSesion()">SALIR</button>
+        <h1>SNAI<span>DER</span></h1>
+        <div class="brand-line"></div>
+        <p class="slogan">Potencia en Limpieza Profesional</p>
+    </header>
+
+    <div class="grid-container">
+        <div class="card"><a href="lavaplatos.html">Lavaplatos</a></div>
+        <div class="card"><a href="desengrasante.html">Desengrasante</a></div>
+        <div class="card"><a href="ariel.html">Detergente Ariel</a></div>
+        <div class="card"><a href="suavizante.html">Suavizante</a></div>
+        <div class="card"><a href="desinfectante.html">Desinfectante</a></div>
+        <div class="card"><a href="cera.html">Cera</a></div>
+        <div class="card"><a href="cloro.html">Cloro</a></div>
+        
+        <div class="card" onclick="abrirCalc()" style="background: #14532d; border-color: #22c55e;">
+            <span style="color: #22c55e; font-weight: 900;">📊 CALCULADORA SNAIDER</span>
+        </div>
+    </div>
+
+    <div id="modalCalc">
+        <div class="modal-content">
+            <span class="close-btn" onclick="cerrarCalc()">[ CERRAR X ]</span>
+            <h2 style="color: #22c55e; margin-top: 10px; text-transform: uppercase;">Insumos Snaider</h2>
+            
+            <select id="productoSelect" onchange="hacerCalculo()">
+                <option value="" disabled selected>-- Seleccione un Producto --</option>
+                <option value="lavaplatos">1. Lavaplatos Líquido</option>
+                <option value="desengrasante">2. Desengrasante Industrial</option>
+                <option value="ariel">3. Detergente Tipo Ariel</option>
+                <option value="suavizante">4. Suavizante Ropa</option>
+                <option value="desinfectante">5. Desinfectante Bactericida</option>
+                <option value="cera">6. Cera Auto Brillo</option>
+                <option value="cloro">7. Cloro (Hipoclorito)</option>
+            </select>
+
+            <input type="number" id="litrosInput" placeholder="Cantidad de Litros" oninput="hacerCalculo()">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>COMPONENTE</th>
+                        <th>CANTIDAD</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTabla"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 SNAIDER | Sistema de Gestión Privado</footer>
+
+    <script>
+        // --- SEGURIDAD ---
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123 || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83 || e.keyCode == 67))) {
+                return false;
+            }
+        };
+
+        function cerrarSesion() {
+            localStorage.removeItem('acceso_snaider');
+            window.location.href = "login.html";
+        }
+
+        // --- LÓGICA DE FORMULACIÓN SNAIDER ---
+        const formulas = {
+            lavaplatos: [
+                {n:"Agua", b:0.870}, {n:"Ácido Sulfónico 97%", b:0.045}, {n:"Genapol Pasta 70%", b:0.045},
+                {n:"Dietanolamina", b:0.010}, {n:"Soda Líquida 50%", b:0.012}, {n:"Sal (Espesante)", b:0.016},
+                {n:"Fragancia", b:0.001}, {n:"Conservante", b:0.001}
+            ],
+            desengrasante: [
+                {n:"Agua", b:0.864}, {n:"Ácido Sulfónico 96.8%", b:0.050}, {n:"Soda Cáustica 50%", b:0.030},
+                {n:"Nonil Fenol 10M", b:0.020}, {n:"Butil Glicol", b:0.020}, {n:"Sal Común", b:0.015},
+                {n:"Conservante", b:0.001}
+            ],
+            ariel: [
+                {n:"Agua", b:0.873}, {n:"Ácido Sulfónico 97%", b:0.045}, {n:"Genapol Pasta 70%", b:0.045},
+                {n:"Soda Líquida 50%", b:0.012}, {n:"Tripolifosfato de Sodio", b:0.005}, {n:"Sal", b:0.018},
+                {n:"Fragancia", b:0.001}, {n:"Conservante", b:0.001}
+            ],
+            suavizante: [
+                {n:"Agua", b:0.972}, {n:"Alcohol Cetílico", b:0.010}, {n:"Ácido Esteárico", b:0.010},
+                {n:"Genapol Pasta", b:0.002}, {n:"Trietanolamina", b:0.001}, {n:"Fragancia", b:0.002},
+                {n:"Glicerina", b:0.002},{n:"Conservante", b:0.001}
+            ],
+            desinfectante: [
+                {n:"Agua", b:0.983}, {n:"Nonil Fenol 10M", b:0.005}, {n:"Amonio Cuaternario", b:0.005},
+                {n:"Fragancia", b:0.005}, {n:"Propilenglicol", b:0.001}, {n:"Conservante", b:0.001}
+            ],
+            cera: [
+                {n:"Agua Desmineralizada", b:0.937}, {n:"Cera en Escama Emuls.", b:0.020}, 
+                {n:"Agua para Ebullición", b:0.040}, {n:"Fragancia", b:0.001}, {n:"Nonil Fenol", b:0.001}
+            ],
+            cloro: [
+                {n:"Agua Desmineralizada", b:0.800}, {n:"Hipoclorito de Sodio 12%", b:0.200}
+            ]
+        };
+
+        function abrirCalc() { document.getElementById('modalCalc').style.display = 'block'; }
+        function cerrarCalc() { document.getElementById('modalCalc').style.display = 'none'; }
+
+        function hacerCalculo() {
+            const prod = document.getElementById('productoSelect').value;
+            const litros = parseFloat(document.getElementById('litrosInput').value) || 0;
+            const cuerpo = document.getElementById('cuerpoTabla');
+            
+            if(!prod) return;
+            cuerpo.innerHTML = "";
+            
+            formulas[prod].forEach(i => {
+                let total = i.b * litros;
+                let unidad = "Kg/L";
+                let valorFormateado = total.toFixed(3);
+
+                if (total < 1 && total > 0) {
+                    valorFormateado = (total * 1000).toFixed(1);
+                    unidad = "gr / ml";
+                }
+
+                cuerpo.innerHTML += `<tr><td>${i.n}</td><td class="resaltado">${valorFormateado} ${unidad}</td></tr>`;
+            });
+        }
+
+        setInterval(() => console.clear(), 1000);
+    </script>
+</body>
+</html>

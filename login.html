@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso SNAIDER | Control de Seguridad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;900&display=swap" rel="stylesheet">
+    <style>
+        /* Bloqueo de selección de texto */
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        body {
+            margin: 0; padding: 0; font-family: 'Roboto', sans-serif;
+            background: #000000; /* FONDO NEGRO PURO */
+            color: white;
+            display: flex; justify-content: center; align-items: center; height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* FONDO DE IMAGEN PERSONALIZADO */
+        .bg-image {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-image: url('https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3; /* Más oscuro para resaltar el verde */
+            filter: blur(4px);
+            z-index: -2;
+        }
+
+        .bg-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.8) 100%);
+            z-index: -1;
+        }
+
+        /* BURBUJAS EN VERDE SNAIDER */
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(34, 197, 94, 0.4); /* Verde Neón */
+            border-radius: 50%;
+            opacity: 0.4;
+            animation: rise 12s infinite ease-in;
+            z-index: -1;
+        }
+
+        @keyframes rise {
+            0% { bottom: -100px; transform: translateX(0); }
+            50% { transform: translateX(40px); }
+            100% { bottom: 110vh; transform: translateX(-40px); }
+        }
+
+        .login-box {
+            background: rgba(10, 10, 10, 0.9);
+            padding: 40px; border-radius: 15px;
+            border: 2px solid #22c55e; /* BORDE VERDE */
+            text-align: center; width: 320px;
+            box-shadow: 0 0 30px rgba(34, 197, 94, 0.2);
+            backdrop-filter: blur(15px);
+            z-index: 10;
+        }
+
+        h2 { color: #22c55e; text-transform: uppercase; margin-bottom: 5px; font-weight: 900; letter-spacing: 2px; }
+        .subtitle { color: #a3a3a3; font-size: 0.8rem; margin-bottom: 25px; letter-spacing: 1px; text-transform: uppercase; }
+        
+        input {
+            width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px;
+            border: 1px solid #166534; background: #000000; color: #22c55e; box-sizing: border-box;
+            outline: none; font-size: 1rem; font-weight: bold;
+            user-select: text !important;
+        }
+
+        input:focus { border-color: #22c55e; box-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
+        
+        .btn-login {
+            background: #22c55e; color: #000000; border: none; padding: 12px;
+            width: 100%; border-radius: 8px; font-weight: 900; cursor: pointer;
+            margin-top: 15px; text-transform: uppercase; transition: 0.3s;
+        }
+
+        .btn-login:hover { background: #16a34a; transform: scale(1.02); box-shadow: 0 0 15px rgba(34, 197, 94, 0.5); }
+        
+        #errorMsg { color: #ef4444; font-size: 0.85rem; display: none; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body oncontextmenu="return false;"> 
+    
+    <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
+
+    <div class="bubble" style="width:40px; height:40px; left:15%; animation-duration:9s;"></div>
+    <div class="bubble" style="width:25px; height:25px; left:25%; animation-duration:14s; animation-delay:1s;"></div>
+    <div class="bubble" style="width:55px; height:55px; left:65%; animation-duration:16s; animation-delay:3s;"></div>
+    <div class="bubble" style="width:35px; height:35px; left:80%; animation-duration:11s; animation-delay:5s;"></div>
+
+    <div class="login-box">
+        <h2>SNAIDER</h2>
+        <div class="subtitle">Panel de Control de Fórmulas</div>
+        
+        <input type="text" id="userInput" placeholder="Usuario" autocomplete="off" spellcheck="false">
+        <input type="password" id="passInput" placeholder="Password">
+        
+        <button class="btn-login" onclick="validarYEntrar()">Acceder al Sistema</button>
+        
+        <button class="btn-login" style="background:#27272a; color:white; margin-top:10px;" onclick="window.location.href='compra.html'">🛒 Tienda Snaider</button>
+        
+        <p id="errorMsg">⚠️ ACCESO DENEGADO</p>
+    </div>
+
+    <script>
+        // Usuarios específicos para el proyecto Snaider
+        const USUARIOS_SNAIDER = {
+            "Admin": "Snaider2026",
+            "Snaider": "SnaiderVip",
+            "jdiaz": "Jhonny24KJ"
+        };
+
+        function validarYEntrar() {
+            const user = document.getElementById('userInput').value.trim();
+            const pass = document.getElementById('passInput').value.trim();
+            const error = document.getElementById('errorMsg');
+
+            if (USUARIOS_SNAIDER[user] && USUARIOS_SNAIDER[user] === pass) {
+                // Seteamos la llave específica de Snaider para el index
+                localStorage.setItem('acceso_snaider', 'true');
+                localStorage.setItem('usuario_actual', user);
+                window.location.href = "index.html";
+            } else {
+                error.style.display = 'block';
+                document.getElementById('passInput').value = "";
+            }
+        }
+
+        document.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { validarYEntrar(); }
+        });
+
+        // Seguridad de consola
+        setInterval(function() { console.clear(); }, 500);
+
+        window.onresize = function() {
+            if ((window.outerHeight - window.innerHeight) > 200 || (window.outerWidth - window.innerWidth) > 200) {
+                document.body.innerHTML = "<h2 style='color:#22c55e; text-align:center; margin-top:20%;'>PROTOCOLOS DE SEGURIDAD ACTIVOS.</h2>";
+            }
+        };
+    </script>
+</body>
+</html>

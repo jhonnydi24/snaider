@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <script>
+        // Bloquear botón derecho
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        // Bloquear copiar
+        document.addEventListener('copy', function(e) {
+            e.preventDefault();
+        });
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloro Hipoclorito - SNAIDER</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #000000; /* Negro Snaider */
+            color: #f4f4f4;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #0a0a0a; /* Fondo oscuro de tarjeta */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.2);
+            border: 1px solid #166534; /* Verde oscuro */
+        }
+        header {
+            text-align: center;
+            border-bottom: 2px solid #22c55e; /* Verde Neón */
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #22c55e; /* Verde Neón */
+            text-transform: uppercase;
+            font-size: 1.8rem;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+        h2 {
+            color: #4ade80;
+            border-bottom: 1px solid #14532d;
+            padding-bottom: 10px;
+        }
+        nav {
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #050505;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #14532d;
+        }
+        th {
+            background-color: #22c55e; /* Verde Neón */
+            color: #000000; /* Texto negro para contraste */
+            text-transform: uppercase;
+        }
+        tr:hover {
+            background-color: #0f1a10;
+        }
+        .procedimiento {
+            background: #050505;
+            padding: 20px;
+            border-left: 5px solid #22c55e;
+            border-radius: 4px;
+            margin-top: 25px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+        }
+        li::before {
+            content: '⚡';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .highlight {
+            color: #22c55e;
+            font-weight: bold;
+        }
+        .btn-back {
+            color: #22c55e;
+            text-decoration: none;
+            font-weight: bold;
+            border: 1px solid #22c55e;
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+        .btn-back:hover {
+            background: #22c55e;
+            color: #000;
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav>
+        <a href="index.html" class="btn-back">VOLVER AL PANEL CENTRAL</a>
+    </nav>
+
+    <header>
+        <h1>CLORO A BASE DE HIPOCLORITO DE SODIO</h1>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Descripción</th>
+                <th>Para 100 Litros</th>
+                <th>Para 1 Litro</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Agua desmineralizada</td><td>80 Kilogramos</td><td>800 Gramos</td></tr>
+            <tr><td>Hipoclorito de sodio al 12%</td><td>20 Kilos</td><td>200 Gramos</td></tr>
+            <tr><td style="color: #22c55e;"><strong>Total</strong></td><td style="color: #22c55e;"><strong>100 Kilogramos</strong></td><td style="color: #22c55e;"><strong>1 Litro</strong></td></tr>
+        </tbody>
+    </table>
+
+    <h2>Procedimiento de Mezclado</h2>
+    <div class="procedimiento">
+        <ul>
+            <li>Pesar el <span class="highlight">agua</span> en el tanque mezclador según la escala de producción.</li>
+            <li>Añadir el <span class="highlight">Hipoclorito de Sodio al 12%</span> al tanque mezclador y agitar por <span class="highlight">5 minutos</span> para homogeneizar.</li>
+            <li>Dejar reposar mínimo por <span class="highlight">3 horas</span> para permitir la decantación de impurezas propias del hipoclorito.</li>
+            <li>Vaciar la parte sucia (sedimento) del producto con cuidado.</li>
+            <li>Realizar el envasado final bajo el sello <span class="highlight">SNAIDER</span>.</li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>

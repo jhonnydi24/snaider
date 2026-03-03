@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedido Inteligente - SNAIDER</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;900&display=swap" rel="stylesheet">
+    <style>
+        /* Paleta SNAIDER: Negro Puro (#000), Verde Neón (#22c55e) y Gris Oscuro (#0a0a0a) */
+        body { font-family: 'Roboto', sans-serif; margin: 20px; background: #000000; color: #f1f5f9; }
+        .pedido-container { max-width: 900px; margin: 0 auto; background: #0a0a0a; padding: 30px; border-radius: 15px; box-shadow: 0 4px 25px rgba(34, 197, 94, 0.2); position: relative; border: 1px solid #166534; }
+        
+        h1 { color: #22c55e; text-align: center; text-transform: uppercase; font-weight: 900; margin-bottom: 5px; letter-spacing: 2px; }
+        .subtitle { text-align: center; color: #4ade80; margin-bottom: 25px; font-weight: 300; }
+
+        /* Estilos Tabla SNAIDER */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: #050505; }
+        th, td { text-align: center; padding: 12px; border-bottom: 1px solid #14532d; }
+        th { background-color: #22c55e; color: black; text-transform: uppercase; font-size: 0.85rem; }
+        td:first-child { text-align: left; font-weight: 500; color: #4ade80; }
+        
+        .cantidad-input { width: 60px; padding: 8px; border: 1px solid #22c55e; border-radius: 5px; text-align: center; background: #000; color: #22c55e; outline: none; }
+        
+        .total-compra-box { background-color: #000; color: #22c55e; padding: 20px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 1.3rem; font-weight: 900; border: 2px solid #22c55e; box-shadow: 0 0 15px rgba(34, 197, 94, 0.3); }
+        
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; text-transform: uppercase; }
+        .detal-badge { background: #14532d; color: #4ade80; }
+        .mayor-badge { background: #22c55e; color: black; box-shadow: 0 0 10px rgba(34, 197, 94, 0.5); }
+
+        /* Panel Admin SNAIDER */
+        .admin-btn { position: absolute; top: 10px; right: 10px; opacity: 0.5; cursor: pointer; border: none; background: none; font-size: 18px; color: #22c55e; transition: 0.3s; }
+        .admin-btn:hover { opacity: 1; transform: rotate(45deg); }
+        
+        .admin-panel { display: none; background: #050505; border: 2px dashed #22c55e; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .admin-row { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 10px; margin-bottom: 5px; align-items: center; }
+        .admin-row input { background: #000; border: 1px solid #166534; color: #fff; padding: 5px; border-radius: 3px; text-align: center; }
+        
+        .btn-save { background: #22c55e; color: black; border: none; padding: 12px; width: 100%; border-radius: 5px; font-weight: bold; cursor: pointer; margin-top: 10px; text-transform: uppercase; transition: 0.3s; }
+        .btn-save:hover { background: #4ade80; box-shadow: 0 0 20px rgba(34, 197, 94, 0.6); }
+    </style>
+</head>
+<body>
+
+    <div class="pedido-container">
+        <button class="admin-btn" onclick="accesoAdmin()">⚙️</button>
+        
+        <h1>Formulario de Pedido SNAIDER</h1>
+        <p class="subtitle">(Precios al Mayor automáticos a partir de 10 unidades)</p>
+
+        <div id="panelAdmin" class="admin-panel">
+            <h3 style="margin-top:0; color: #22c55e;">Panel de Control SNAIDER</h3>
+            <div id="listaAdmin"></div>
+            <button class="btn-save" onclick="subirPrecios()">GUARDAR CAMBIOS EN LA NUBE</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>P. Detal</th>
+                    <th>P. Mayor</th>
+                    <th>Cantidad</th>
+                    <th>Tipo</th>
+                    <th>Subtotal (Bs.)</th>
+                </tr>
+            </thead>
+            <tbody id="tablaProductos"></tbody>
+        </table>
+
+        <div class="total-compra-box">
+            <span>TOTAL FINAL:</span>
+            <span><span id="totalFinal">0.00</span> Bs.</span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+
+    <script>
+        // CONFIGURACIÓN ACTUALIZADA - SNAIDER PROJECT
+        const firebaseConfig = {
+            apiKey: "AIzaSyAmjzyar9Rn_Ko_zXztKNxUTfIpFceEL9A",
+            authDomain: "snaider-c7148.firebaseapp.com",
+            databaseURL: "https://snaider-c7148-default-rtdb.firebaseio.com",
+            projectId: "snaider-c7148",
+            storageBucket: "snaider-c7148.firebasestorage.app",
+            messagingSenderId: "58921760169",
+            appId: "1:58921760169:web:3cf5fdae16dfc17d29c0b8",
+            measurementId: "G-302XZMCDCV"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const refProd = db.ref('productos');
+
+        // LEER PRECIOS EN TIEMPO REAL
+        refProd.on('value', (snapshot) => {
+            const productos = snapshot.val();
+            if (productos) {
+                dibujarTablas(productos);
+            } else {
+                // Datos iniciales en caso de base de datos nueva/vacía
+                const inicial = [
+                    {nombre: "Ariel", detal: 550, mayor: 420},
+                    {nombre: "Cera", detal: 550, mayor: 420},
+                    {nombre: "Cloro", detal: 150, mayor: 100},
+                    {nombre: "Desengrasante", detal: 550, mayor: 420},
+                    {nombre: "Desinfectante", detal: 200, mayor: 160},
+                    {nombre: "Jabón Líquido", detal: 200, mayor: 160},
+                    {nombre: "Lavaplatos", detal: 550, mayor: 420},
+                    {nombre: "Suavizante", detal: 350, mayor: 280}
+                ];
+                refProd.set(inicial);
+            }
+        });
+
+        function dibujarTablas(productos) {
+            const tbody = document.getElementById('tablaProductos');
+            const lAdmin = document.getElementById('listaAdmin');
+            tbody.innerHTML = "";
+            lAdmin.innerHTML = "";
+
+            productos.forEach((p, i) => {
+                tbody.innerHTML += `
+                    <tr data-detal="${p.detal}" data-mayor="${p.mayor}">
+                        <td>${p.nombre}</td>
+                        <td>${p.detal}</td>
+                        <td>${p.mayor}</td>
+                        <td><input type="number" class="cantidad-input" value="0" min="0" oninput="calcular()"></td>
+                        <td><span class="badge detal-badge">Detal</span></td>
+                        <td><span class="subtotal" style="color: #22c55e; font-weight: bold;">0.00</span> Bs.</td>
+                    </tr>
+                `;
+                lAdmin.innerHTML += `
+                    <div class="admin-row">
+                        <span style="color: #4ade80">${p.nombre}</span>
+                        <input type="number" class="edit-detal" value="${p.detal}">
+                        <input type="number" class="edit-mayor" value="${p.mayor}">
+                    </div>
+                `;
+            });
+            calcular();
+        }
+
+        function calcular() {
+            let total = 0;
+            const filas = document.querySelectorAll('tbody tr');
+            filas.forEach(fila => {
+                const det = parseFloat(fila.getAttribute('data-detal'));
+                const may = parseFloat(fila.getAttribute('data-mayor'));
+                const cant = parseInt(fila.querySelector('.cantidad-input').value) || 0;
+                const badge = fila.querySelector('.badge');
+                
+                let precio = (cant >= 10) ? may : det;
+                badge.textContent = (cant >= 10) ? "AL MAYOR" : "DETAL";
+                badge.className = "badge " + ((cant >= 10) ? "mayor-badge" : "detal-badge");
+
+                let sub = cant * precio;
+                fila.querySelector('.subtotal').textContent = sub.toFixed(2);
+                total += sub;
+            });
+            document.getElementById('totalFinal').textContent = total.toFixed(2);
+        }
+
+        function accesoAdmin() {
+            const clave = prompt("Clave de Seguridad SNAIDER:");
+            if (clave === "snaider2026") {
+                document.getElementById('panelAdmin').style.display = 'block';
+            } else {
+                alert("Acceso denegado.");
+            }
+        }
+
+        function subirPrecios() {
+            const nombres = document.querySelectorAll('.admin-row span');
+            const detals = document.querySelectorAll('.edit-detal');
+            const mayors = document.querySelectorAll('.edit-mayor');
+            let nuevos = [];
+            
+            nombres.forEach((n, i) => {
+                nuevos.push({
+                    nombre: n.textContent,
+                    detal: parseFloat(detals[i].value),
+                    mayor: parseFloat(mayors[i].value)
+                });
+            });
+
+            refProd.set(nuevos).then(() => {
+                alert("Base de Datos SNAIDER Actualizada");
+                document.getElementById('panelAdmin').style.display = 'none';
+            }).catch(error => {
+                alert("Error al guardar. Verifica las reglas de seguridad de Firebase.");
+                console.error(error);
+            });
+        }
+    </script>
+</body>
+</html>
