@@ -6,7 +6,7 @@
     <title>Pedido Inteligente - SNAIDER</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;900&display=swap" rel="stylesheet">
     <style>
-        /* Paleta SNAIDER: Negro Puro (#000), Verde Neón (#22c55e) y Gris Oscuro (#0a0a0a) */
+        /* Paleta SNAIDER: Negro Puro, Verde Neón y Gris Oscuro */
         body { font-family: 'Roboto', sans-serif; margin: 20px; background: #000000; color: #f1f5f9; }
         .pedido-container { max-width: 900px; margin: 0 auto; background: #0a0a0a; padding: 30px; border-radius: 15px; box-shadow: 0 4px 25px rgba(34, 197, 94, 0.2); position: relative; border: 1px solid #166534; }
         
@@ -77,7 +77,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
 
     <script>
-        // CONFIGURACIÓN ACTUALIZADA - SNAIDER PROJECT
+        // CONFIGURACIÓN OBTENIDA DE TUS CAPTURAS
         const firebaseConfig = {
             apiKey: "AIzaSyAmjzyar9Rn_Ko_zXztKNxUTfIpFceEL9A",
             authDomain: "snaider-c7148.firebaseapp.com",
@@ -93,13 +93,13 @@
         const db = firebase.database();
         const refProd = db.ref('productos');
 
-        // LEER PRECIOS EN TIEMPO REAL
+        // Escuchar cambios en tiempo real
         refProd.on('value', (snapshot) => {
             const productos = snapshot.val();
             if (productos) {
                 dibujarTablas(productos);
             } else {
-                // Datos iniciales en caso de base de datos nueva/vacía
+                // Si la base de datos está en "null", cargar productos iniciales
                 const inicial = [
                     {nombre: "Ariel", detal: 550, mayor: 420},
                     {nombre: "Cera", detal: 550, mayor: 420},
@@ -164,7 +164,7 @@
 
         function accesoAdmin() {
             const clave = prompt("Clave de Seguridad SNAIDER:");
-            if (clave === "snaider2026") {
+            if (clave === "Jhonny24KJ") {
                 document.getElementById('panelAdmin').style.display = 'block';
             } else {
                 alert("Acceso denegado.");
@@ -188,10 +188,7 @@
             refProd.set(nuevos).then(() => {
                 alert("Base de Datos SNAIDER Actualizada");
                 document.getElementById('panelAdmin').style.display = 'none';
-            }).catch(error => {
-                alert("Error al guardar. Verifica las reglas de seguridad de Firebase.");
-                console.error(error);
-            });
+            }).catch(e => alert("Error: Verifica las reglas de Firebase"));
         }
     </script>
 </body>
